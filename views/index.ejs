@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Teste</title>
+    <link rel="shortcut icon" href="#" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style type="text/css">
+        html {height:100%; width: 100%;};
+        body {width: 100%; height: 100%;margin:0;}
+        div.obj1 {width: 10%; height: 100%; float: left; background-color: gray; width: 150px;}
+        div.obj1 form {height: 100%;}
+        div.obj1 button {width: 100%;}
+        div.obj1 span {color: white;}
+        div.obj1 label {color: white;}
+        div.obj1 #quantity {width: 87%;}
+        div.obj1 #quantity .focu:focus {border: 1px solid green !important;box-shadow: 0 0 3px green !important;-moz-box-shadow: 0 0 3px green !important;-webkit-box-shadow: 0 0 3px green !important;}
+        div.obj2 {display:none; width: 140px; height: 100%; background-color: whitesmoke; overflow:hidden; float: left;}
+        div.obj2 select {width:97%;}
+        div.obj3 {float: left; width:77%;height: 100%;background-color: lightgray;}
+        div.obj3 li{list-style-type: none;text-align: center;font-size: 3em;}
+        div.obj3 #antProx {text-align: center;}
+    </style>
+  </head>
+  <body style="height:100%;">
+    <div class="obj1">
+            <button class="option">Option</button>
+            <span>
+                <label>Quantity</label>
+                <input id="quantity" name='qtde'>
+                <input type="button" id="enviaDados" value="Enviar" name="submit">
+            </span>
+    </div>
+    <div class="obj2">
+        <select id="option" name="option">
+            <option value="A">A</option>
+            <option value="B">B</option>
+        </select>
+    </div>
+    <div class="obj3">
+        <ul class="lista"> 
+            <% let teste = qtde %>
+            <% for(let i=0; i<teste; i++) { %>
+                <li><%=option%><%=i+1%></li>
+            <% } %>
+        </ul>
+        <div id="antProx">
+            <button id="anterior"> < </button>
+            <button id="prox"> > </button>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+        $(".option").on('click', function(e){
+            $('.obj2').animate({width:'toggle'},350);
+        })
+        let numPage = 1
+        let arr = [];
+        function render(){
+            let qtde = $('#quantity')[0].value;
+            let option = $('#option')[0].value;
+            $.ajax({
+                url: '/',
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                data:{valor: qtde, option: option} ,
+                cache: false,
+                type: "POST",
+                success: function(data){
+                    arr=[];
+                    $('li').remove();
+                        for (let i = 1; i<= data.qtde;i++){
+                            arr.push(i);
+                        }
+                        for (let i = 0; i<3;i++){
+                            $('.lista').append("<li class ="+i+">Item "+data.option+(i+numPage)+"</li>");
+                        }
+                }
+            })
+        }
+        $("#enviaDados").on('click', function(){
+            let vazio = $('#quantity')[0].value;
+            if(vazio == 0){
+                $('#quantity').css("border","solid red 2px");
+                return;
+            } else{
+                $('#quantity').css("border","solid lightgray 2px");
+                render();
+            }
+        });
+        $('#prox').on('click', function(){
+            if(numPage == arr.length-2 || numPage==arr.length-1 || numPage == arr.length) numPage = 1 ;
+            else numPage+=3;
+            render();
+        })
+        $('#anterior').on('click',function(){
+            if(numPage == 1) numPage = arr.length-2;
+            else numPage-=3;
+            render();
+        })
+    }); 
+    </script>
+  </body>
+</html>
