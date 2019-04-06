@@ -53,7 +53,9 @@
         $(".option").on('click', function(e){
             $('.obj2').animate({width:'toggle'},350);
         })
-        let numPage = 1
+        let numPage = 1;
+        let teste = 0;
+        let cont = 0;
         let arr = [];
         function render(){
             let qtde = $('#quantity')[0].value;
@@ -67,12 +69,20 @@
                 success: function(data){
                     arr=[];
                     $('li').remove();
-                        for (let i = 1; i<= data.qtde;i++){
+                        for (let i = 1; i <= data.qtde;i++){
                             arr.push(i);
                         }
-                        for (let i = 0; i<3;i++){
-                            $('.lista').append("<li class ="+i+">Item "+data.option+(i+numPage)+"</li>");
-                        }
+                        let inteiro = parseInt(arr.length/3);
+                        let total = arr.length - (inteiro*3);
+                        if(total > 0) cont = inteiro+1;
+                        console.log(total);  
+                        for(let j = 0; j < cont; j++){
+                            for (let i = 0; i < 3;i++){
+                                teste += 1;
+                                if(teste == arr.length+1)return;
+                                $('.lista').append("<li class ="+i+">Item "+data.option+(i+numPage)+"</li>");
+                            }
+                        }   
                 }
             })
         }
